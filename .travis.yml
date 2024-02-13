@@ -1,0 +1,40 @@
+os: linux
+dist: jammy
+language: php
+
+cache:
+  npm: true
+  yarn: true
+  directories:
+  - "$HOME/.composer/cache"
+  - "./vendor"
+
+before_install:
+- phpenv config-rm xdebug.ini
+
+install:
+- composer install
+
+jobs:
+  include:
+  - stage: Lint
+    php: 8.2
+    script:
+    - composer lint
+
+  - stage: Update Draft GitHub Release
+    php: 8.2
+    if: branch = main
+    script:
+    - zip -r ../cmb2-password-field.zip ./ -x docs\* -x private\* -x vendor\* -x .\* -x CHANGELOG.md -x CODE_OF_CONDUCT.md -x composer.json -x composer.lock -x CONTRIBUTING.md -x LICENSE.md -x phpcs.xml -x SECURITY.md
+    deploy:
+      provider: releases
+      token:
+        secure: "X+GaXzln2AcINyNKykzUo7rdYIR1RzWqa2ZiPvgGePxd+7padHqM8Ij3d2kPseO7kQbvfbZvD7D9uPy23MppwOvi0xWDoenMr6sLZoCu8n97v3geF89btAfjOzfceMmnrw49tr3J/u5goJrobsLtmoerugmJLL19FNSDa9Ur3Us96woJ7ZnebzUWPiI2cCAhCM5GmvU0Kz2DDA0DIv9O7Vbxd40FgoqrUuUGD6cOGRrcx5kuubAy1gROX47pMVgtf5ltRtIl3nYYmGdH18tR5BhR/osL8aSV40SB8oAhzWAB5YfTlDA+dJrV3xQrMQmuUVgqheN24IQv1xDCL9fTNXxD6yK5rpxXfwr7w5IQOU+FA2kd9tPu8XU8jOErojjuixA9ZvguUzmJJ1fn+ZpZOyEOFM1pkzFBpg21Wfaf+ye91Bv8PYudJ/3XyzibtGbJH2ZbNJRgBR3UAmCCCJts3PfBdOr/9n7+pHqlDJhTiGKRtHp8+JwXWpYlmj7ZPRFFV+BVttJ7AK2Nc0EnCjJEMbReQKdFnQocDOC5fjlzWEAP/mVxiGL3uJ1RSLsTWeOehtwhe+LASZUnl2ZcX3wFUYyYxCtcHAFngAdb1ir060I2VDiwjqL7/ndeyR4lQXzh9+JP/pRAVxxfzbcH1QJzHn4ZaGfrqnMCqAxwrS0lvYM="
+      file: "../cmb2-password-field.zip"
+      skip_cleanup: true
+      draft: true
+      overwrite: true
+      on:
+        repo: amnestywebsite/cmb2-password-field
+        branch: main

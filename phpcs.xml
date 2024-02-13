@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<ruleset name="CMB2 Message Field" namespace="BigBite">
+  <description>PHPCS linting rules for the CMB2 Message Field WP plugin</description>
+  <rule ref="./vendor/bigbite/phpcs-config/BigBite" />
+</ruleset>
